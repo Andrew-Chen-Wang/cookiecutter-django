@@ -3,7 +3,11 @@ version: '3'
 volumes:
   production_postgres_data: {}
   production_postgres_data_backups: {}
+  {%- if cookiecutter.cloud_provider == "AWS" %}
+  production_nginx: {}
+  {%- else %}
   production_traefik: {}
+  {%- endif %}
 
 services:
   django:{% if cookiecutter.use_celery == 'y' %} &django{% endif %}
@@ -30,22 +34,6 @@ services:
     env_file:
       - ./.envs/.production/.postgres
 
-  traefik:
-    build:
-      context: .
-      dockerfile: ./compose/production/traefik/Dockerfile
-    image: {{ cookiecutter.project_slug }}_production_traefik
-    depends_on:
-      - django
-    volumes:
-      - production_traefik:/etc/traefik/acme
-    ports:
-      - "0.0.0.0:80:80"
-      - "0.0.0.0:443:443"
-      {%- if cookiecutter.use_celery == 'y' %}
-      - "0.0.0.0:5555:5555"
-      {%- endif %}
-
   redis:
     image: redis:5.0
   {%- if cookiecutter.use_celery == 'y' %}
@@ -68,6 +56,18 @@ services:
   {%- endif %}
 
   {% if cookiecutter.cloud_provider == 'AWS' %}
+  nginx:
+    build:
+      context: .
+      dockerfile: ./compose/production/nginx/Dockerfile
+    image: {{ cookiecutter.project_slug }}_production_nginx
+    depends_on:
+      - django
+    volumes:
+      - production_nginx:/etc/nginx/conf.d/oursite.conf
+    ports:
+      - 80:80
+
   awscli:
     build:
       context: .
@@ -76,4 +76,21 @@ services:
       - ./.envs/.production/.django
     volumes:
       - production_postgres_data_backups:/backups
+  {% else %}
+  traefik:
+    build:
+      context: .
+      dockerfile: ./compose/production/traefik/Dockerfile
+    image: {{ cookiecutter.project_slug }}_production_traefik
+    depends_on:
+      - django
+    volumes:
+      - production_traefik:/etc/traefik/acme
+    ports:
+      - "0.0.0.0:80:80"
+      - "0.0.0.0:443:443"
+      {%- if cookiecutter.use_celery == 'y' %}
+      - "0.0.0.0:5555:5555"
+      {%- endif %}
+
   {%- endif %}
