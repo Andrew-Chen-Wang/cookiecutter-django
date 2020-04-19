@@ -62,14 +62,9 @@ services:
     depends_on:
       - django
     volumes:
-      - ./compose/production/nginx/oursite.conf:/etc/nginx/site-enabled/default
+      - ./nginx/conf.d:/etc/nginx/conf.d/
     ports:
       - 80:80
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        window: 60s
 
   awscli:
     build:
