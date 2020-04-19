@@ -55,18 +55,21 @@ services:
 
   {%- endif %}
 
-  {% if cookiecutter.cloud_provider == 'AWS' %}
+  {% if cookiecutter.cloud_provider == 'AWS' -%}
   nginx:
-    build:
-      context: .
-      dockerfile: ./compose/production/nginx/Dockerfile
-    image: {{ cookiecutter.project_slug }}_production_nginx
+    image: nginx:alpine
+    container_name: {{ cookiecutter.project_slug }}_production_nginx
     depends_on:
       - django
     volumes:
-      - production_nginx:/etc/nginx/conf.d/oursite.conf
+      - ./compose/production/nginx/oursite.conf:/etc/nginx/site-enabled/default
     ports:
       - 80:80
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        window: 60s
 
   awscli:
     build:
