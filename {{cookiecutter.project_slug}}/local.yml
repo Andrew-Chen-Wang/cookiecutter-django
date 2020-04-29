@@ -36,6 +36,10 @@ services:
       - local_postgres_data_backups:/backups
     env_file:
       - ./.envs/.local/.postgres
+
+  redis:
+    image: redis:5.0
+    container_name: redis
   {%- if cookiecutter.use_mailhog == 'y' %}
 
   mailhog:
@@ -46,10 +50,6 @@ services:
 
   {%- endif %}
   {%- if cookiecutter.use_celery == 'y' %}
-
-  redis:
-    image: redis:5.0
-    container_name: redis
 
   celeryworker:
     <<: *django
