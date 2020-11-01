@@ -27,7 +27,7 @@ flower==0.9.5  # https://github.com/mher/flower
 uvicorn==0.12.1  # https://github.com/encode/uvicorn
 uvloop==0.14.0  # https://github.com/MagicStack/uvloop
 httptools==0.1.1  # https://github.com/MagicStack/httptools
-wsproto==0.15.0  # https://github.com/python-hyper/wsproto/
+websockets==8.1  # https://github.com/aaugustin/websockets
 {%- endif %}
 
 # Django
