@@ -18,9 +18,9 @@ matrix:
     - name: Basic Docker
       script: sh tests/test_docker.sh
     - name: Extended Docker
-      script: sh tests/test_docker.sh use_celery=y use_drf=y js_task_runner=Gulp
+      script: sh tests/test_docker.sh use_celery=y use_drf=y use_async=y js_task_runner=Gulp
     - name: Bare metal
-      script: sh tests/test_bare.sh use_celery=y use_compressor=y
+      script: sh tests/test_bare.sh use_celery=y use_compressor=y use_async=y
       services:
         - postgresql
         - redis-server
